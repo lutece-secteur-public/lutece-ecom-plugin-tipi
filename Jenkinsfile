@@ -31,32 +31,13 @@ pipeline {
     
     // BUILD 
     stage('Compile - Tests'){
-      when { branch 'master' }
       steps {
-          echo 'Branche master'
-          sh 'mvn clean install'
-          // Mise à jour github
+          gitlabCommitStatus {
+            sh 'mvn clean install'
+          }
         }
     }
-
-    stage('Compile - Tests'){
-      when { branch 'develop' }
-      steps {
-        gitlabCommitStatus {
-          echo 'Branche develop'
-          sh 'mvn clean install'
-        }
-      }
-    } 
-  
-    stage('Compile - Tests'){
-      when { expression { BRANCH_NAME ==~ /^feature.*/ } }
-      steps {
-          echo 'Branche feature'
-          sh 'mvn clean install'          
-        }
-    }  
-    
+   
     // SONAR
     stage('Analyse Sonar'){ 
       when { branch 'develop' }
@@ -65,14 +46,21 @@ pipeline {
       }
     } 
 
-    stage('Compile - Tests'){
+    stage('Analyse Sonar 2'){
       when { expression { BRANCH_NAME ==~ /^feature.*/ } }
       steps {
-          sh 'echo analyse sonar' 
-          // TODO: analyse sonar des commits         
+          echo 'Analyse sonar des commits'        
         }
     }
-    
+
+    // Github
+    stage('Update gitHub'){
+      when { branch 'master' }
+      steps {
+        echo 'Mise à jour github'
+      }
+    }
+
   }
 
 }
