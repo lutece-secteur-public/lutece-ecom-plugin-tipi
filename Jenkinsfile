@@ -17,7 +17,15 @@ pipeline {
 
     stage('Clone repository') {
         steps {
-          scm checkout
+            checkout([
+              $class: 'GitSCM', 
+              branches: [[name: 'develop']],
+              doGenerateSubmoduleConfigurations: false,
+              extensions: [],
+              submoduleCfg: [],
+              userRemoteConfigs: [[credentialsId: 'gitlab-credentials',
+              url: 'http://gestionversion.acn/applications_lutece/lutece-ecom-plugin-tipi.git']]
+            ])
         }
     }
     
