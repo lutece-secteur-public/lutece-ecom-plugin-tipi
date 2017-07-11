@@ -10,7 +10,7 @@ import fr.paris.vdp.tipi.create.url.enumeration.PaymentType;
 /**
  * Cette classe permet de mapper les donnees issues de l'application dans la request du webservice.
  */
-public class MapperPaiementSecurise
+public class TipiRequestFactory
 {
     private static final String     X                = "X";
     private static final String     W                = "W";
@@ -21,12 +21,16 @@ public class MapperPaiementSecurise
     private static final String     PAYMENT_TYPE     = "tipi.saisie";
     private static final BigDecimal CENT             = new BigDecimal( "100" );
 
+    private TipiRequestFactory( )
+    {
+    }
+
     /**
      * Creation de la requete envoyee au webservice.
      *
      * @param email
      *            mail de l'usager
-     * @param idDossier
+     * @param refDet
      *            identifiant
      * @param amount
      *            montant de la transaction en euros

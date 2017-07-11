@@ -22,8 +22,10 @@ import fr.paris.vdp.tipi.create.url.webservice.ParametresPaiementTipi;
  * @author stephane.raynaud
  *
  */
-public class Tipi extends ParametresPaiementTipi
+public class Tipi
 {
+    private static final long      serialVersionUID    = 7173528813310268296L;
+
     private static final Logger    logger              = Logger.getLogger( "lutece" );
 
     private static final String    TRUSTSTORE          = "tipi.ssl.truststore";
@@ -54,7 +56,7 @@ public class Tipi extends ParametresPaiementTipi
 
         final String urlWsdl = getWsdlUrl( );
 
-        final CreerPaiementSecuriseRequest request = MapperPaiementSecurise.createRequest( email, numeroDossier, amount );
+        final CreerPaiementSecuriseRequest request = TipiRequestFactory.createRequest( email, numeroDossier, amount );
 
         logger.debug( "url du webservice : " + urlWsdl );
         logger.debug( "parametre de la requete : " + Utils.object2String( request ) );
