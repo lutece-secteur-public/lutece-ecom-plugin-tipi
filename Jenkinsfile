@@ -29,35 +29,33 @@ pipeline {
         }
     }
     
-    gitlabCommitStatus {
-
-      // BUILD 
-      stage('Compile - Tests'){
-        when { branch 'master' }
-        steps {
-            echo 'Branche master'
-            sh 'mvn clean install'
-            // Mise à jour github
-          }
-      }
-
-      stage('Compile - Tests'){
-        when { branch 'develop' }
-        steps {
-            echo 'Branche develop'
-            sh 'mvn clean install'
-          }
-      } 
-    
-      stage('Compile - Tests'){
-        when { expression { BRANCH_NAME ==~ /^feature.*/ } }
-        steps {
-            echo 'Branche feature'
-            sh 'mvn clean install'          
-          }
-      }
-
+    // BUILD 
+    stage('Compile - Tests'){
+      when { branch 'master' }
+      steps {
+          echo 'Branche master'
+          sh 'mvn clean install'
+          // Mise à jour github
+        }
     }
+
+    stage('Compile - Tests'){
+      when { branch 'develop' }
+      steps {
+        gitlabCommitStatus {
+          echo 'Branche develop'
+          sh 'mvn clean install'
+        }
+      }
+    } 
+  
+    stage('Compile - Tests'){
+      when { expression { BRANCH_NAME ==~ /^feature.*/ } }
+      steps {
+          echo 'Branche feature'
+          sh 'mvn clean install'          
+        }
+    }  
     
     // SONAR
     stage('Analyse Sonar'){ 
