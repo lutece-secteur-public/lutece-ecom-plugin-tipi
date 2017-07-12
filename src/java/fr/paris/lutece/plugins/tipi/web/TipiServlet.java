@@ -34,9 +34,6 @@
 package fr.paris.lutece.plugins.tipi.web;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
-import java.security.InvalidParameterException;
-import java.text.ParseException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -44,44 +41,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.rpc.ServiceException;
 
-import org.apache.commons.lang.StringUtils;
-
 import fr.paris.lutece.plugins.tipi.service.Tipi;
 import fr.paris.lutece.portal.service.util.AppLogService;
-import fr.paris.vdp.tipi.create.url.utils.PaiementUtils;
 
 /**
  * Used for special solr queries
  *
  *
  */
-public abstract class TipiServlet extends HttpServlet
+public class TipiServlet extends HttpServlet
 {
     private static final long serialVersionUID = -7065654487722361439L;
-
-    /**
-     * Action en cas de succès du paiement
-     * 
-     * @param tipiHandler
-     *            les paramètres Tipi
-     */
-    public abstract void paymentSuccess( Tipi tipiHandler );
-
-    /**
-     * Action en cas de refus du paiement
-     * 
-     * @param tipiHandler
-     *            les paramètres Tipi
-     */
-    public abstract void paymentDenied( Tipi tipiHandler );
-
-    /**
-     * Action en cas d'annulation du paiement
-     * 
-     * @param tipiHandler
-     *            les paramètres Tipi
-     */
-    public abstract void paymentCancelled( Tipi tipiHandler );
 
     /**
      * Returns poster image
@@ -100,10 +70,10 @@ public abstract class TipiServlet extends HttpServlet
     {
         try
         {
-            handlePayment( getParameters( request ) );
-        } catch ( ParseException e )
+            Tipi.read( request ).process( );
+        } catch ( ServiceException e )
         {
-            throw new ServletException( "erreur traitement Tipi : " + e.getMessage( ) );
+            AppLogService.error( "Impossible de lire les informations du paiement", e );
         }
     }
 
@@ -124,80 +94,10 @@ public abstract class TipiServlet extends HttpServlet
     {
         try
         {
-            handlePayment( getParameters( request ) );
-        } catch ( ParseException e )
+            Tipi.read( request ).process( );
+        } catch ( ServiceException e )
         {
-            throw new ServletException( "erreur traitement Tipi : " + e.getMessage( ) );
-        }
-    }
-
-    /**
-     * Valorise les informations de paiement
-     *
-     * @param request
-     * @return
-     * @throws EvacException
-     */
-    private Tipi getParameters( HttpServletRequest request ) throws ServletException
-    {
-        String idOp = request.getParameter( "idOp" );
-
-        if ( StringUtils.isBlank( idOp ) )
-        {
-            idOp = String.valueOf( request.getParameter( "idop" ) );
-        }
-
-        if ( StringUtils.isBlank( idOp ) )
-        {
-            AppLogService.error( "echec traitement servlet, idOp is null" );
-            return null;
-        }
-
-        try
-        {
-            return new Tipi( idOp );
-        } catch ( RemoteException | ServiceException e )
-        {
-            AppLogService.error( "servlet, idOp = " + idOp + ", echec lors de l'acces au webservice pour recuperer les informations de paiement : " + e.getMessage( ) );
-            throw new ServletException( e );
-        }
-    }
-
-    /**
-     * Apres le paiement sur tipi, on enregistre en base le resultat de la transaction.
-     *
-     * @param tipiHandler
-     *            contient les donnees de la transaction
-     * @throws ParseException
-     *             en cas d'erreur sur la date
-     * @throws EvacException
-     *             en cas de paramètre invalide
-     */
-    public final void handlePayment( Tipi tipiHandler ) throws ParseException
-    {
-        // On vérifie que la requete contient bien les données nécessaires
-        String invalidReqParamMessage = PaiementUtils.requestParamsInvalid( tipiHandler.getParameters( ) );
-
-        if ( !StringUtils.isEmpty( invalidReqParamMessage ) )
-        {
-            AppLogService.error( invalidReqParamMessage );
-            throw new InvalidParameterException( "Erreur lors de la récupération des paramètres Tipi : " + invalidReqParamMessage );
-        }
-
-        // Si Resultr
-        if ( tipiHandler.isPaymentSuccess( ) )
-        {
-            // Paiement validé
-            paymentSuccess( tipiHandler );
-
-        } else if ( tipiHandler.isPaymentDenied( ) )
-        {
-            // Paiement refusé
-            paymentDenied( tipiHandler );
-        } else
-        {
-            // Paiement abandonné
-            paymentCancelled( tipiHandler );
+            AppLogService.error( "Impossible de lire les informations du paiement", e );
         }
     }
 
