@@ -41,6 +41,7 @@ pipeline {
    
     // SONAR
     stage('Analyse Sonar'){ 
+      tools {jdk "jdk8"}
       when { branch 'develop' }
       steps {
           sh 'mvn sonar:sonar'
