@@ -2,6 +2,7 @@ pipeline {
 
   tools {
     maven 'maven-3.3.9'
+    jdk "jdk7"
   }
 
   agent any
@@ -19,7 +20,7 @@ pipeline {
         steps {
             checkout([
               $class: 'GitSCM', 
-              branches: [[name: 'develop']],
+              branches: [[name: BRANCH_NAME]],
               doGenerateSubmoduleConfigurations: false,
               extensions: [],
               submoduleCfg: [],
