@@ -47,5 +47,11 @@
     
     <!-- Daemons -->
     <daemons>
+        <daemon>
+         	<daemon-id>tipiDeamon</daemon-id>
+            <daemon-name>tipi.dameon.name</daemon-name>
+            <daemon-description>tipi.dameon.description</daemon-description>
+            <daemon-class>fr.paris.lutece.plugins.tipi.task.TipiTask</daemon-class>
+        </daemon>
     </daemons>
 </plug-in>

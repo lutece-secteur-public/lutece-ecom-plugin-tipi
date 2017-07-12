@@ -38,11 +38,16 @@ package fr.paris.lutece.plugins.tipi.constant;
 /**
  * Constants diverse.
  */
-public interface Constants
+public class Constants
 {
-
     // ETAT DU PAIEMENT
     public static final String PAYMENT_SUCCESS   = "P";
     public static final String PAYMENT_DENIED    = "R";
     public static final String PAYMENT_CANCELLED = "A";
+
+    public static final String DATE_FORMAT       = "dd/MM/yyyy";
+
+    private Constants( )
+    {
+    }
 }
