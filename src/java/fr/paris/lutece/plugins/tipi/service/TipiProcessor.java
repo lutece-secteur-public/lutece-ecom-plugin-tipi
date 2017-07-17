@@ -3,21 +3,27 @@
  */
 package fr.paris.lutece.plugins.tipi.service;
 
+import java.io.Serializable;
 import java.security.InvalidParameterException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.vdp.tipi.create.url.utils.PaiementUtils;
 
 /**
  * @author stephane.raynaud
  *
  */
-public abstract class TipiProcessor
+public abstract class TipiProcessor implements Serializable
 {
-    private static final Logger logger = Logger.getLogger( "lutece" );
+    private static final long serialVersionUID = 547069111354940576L;
+
+    public TipiProcessor( )
+    {
+        // Empty constructor
+    }
 
     /**
      * Action en cas de succès du paiement
@@ -64,7 +70,7 @@ public abstract class TipiProcessor
 
         if ( !StringUtils.isEmpty( invalidReqParamMessage ) )
         {
-            logger.error( invalidReqParamMessage );
+            AppLogService.error( invalidReqParamMessage );
             throw new InvalidParameterException( "Erreur lors de la récupération des paramètres Tipi : " + invalidReqParamMessage );
         }
 

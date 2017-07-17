@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.rpc.ServiceException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 import fr.paris.lutece.plugins.tipi.constant.Constants;
 import fr.paris.lutece.plugins.tipi.utils.Utils;
@@ -34,8 +33,6 @@ import fr.paris.vdp.tipi.create.url.webservice.ParametresPaiementTipi;
 public class Tipi implements Serializable
 {
     private static final long      serialVersionUID    = 7173528813310268296L;
-
-    private static final Logger    logger              = Logger.getLogger( "lutece" );
 
     private static final String    TRUSTSTORE          = "tipi.ssl.truststore";
     private static final String    TRUSTSTORE_PASSWORD = "tipi.ssl.truststore.password";                 // NOSONAR
@@ -78,8 +75,8 @@ public class Tipi implements Serializable
 
         final CreerPaiementSecuriseRequest request = TipiRequestFactory.createRequest( email, refDet, amount );
 
-        logger.debug( "url du webservice : " + urlWsdl );
-        logger.debug( "parametre de la requete : " + Utils.object2String( request ) );
+        AppLogService.debug( "url du webservice : " + urlWsdl );
+        AppLogService.debug( "parametre de la requete : " + Utils.object2String( request ) );
 
         tipi.identifier = new CreateURLWebService( ).appelWebServiceCreerPaiement( urlWsdl, request );
 
@@ -105,8 +102,8 @@ public class Tipi implements Serializable
         RecupererDetailPaiementSecuriseRequest request = new RecupererDetailPaiementSecuriseRequest( );
         request.setIdOp( idOp );
 
-        logger.debug( "url du webservice : " + urlWsdl );
-        logger.debug( "parametre de la requete : " + Utils.object2String( request ) );
+        AppLogService.debug( "url du webservice : " + urlWsdl );
+        AppLogService.debug( "parametre de la requete : " + Utils.object2String( request ) );
 
         tipi.identifier = idOp;
         tipi.parameters = new CreateURLWebService( ).appelWebserviceDetailPaiement( request, urlWsdl );
@@ -255,7 +252,7 @@ public class Tipi implements Serializable
     {
         if ( this.processor == null )
         {
-            logger.warn( "Aucun handler n'a été défini pour gérer le retour du service Tipi" );
+            AppLogService.info( "Aucun handler n'a été défini pour gérer le retour du service Tipi" );
         } else
         {
             this.processor.process( this );
