@@ -25,7 +25,7 @@ pipeline {
               extensions: [],
               submoduleCfg: [],
               userRemoteConfigs: [[credentialsId: 'gitlab-credentials',
-              url: 'http://gestionversion.acn/applications_lutece/lutece-ecom-plugin-tipi.git']]
+              url: 'git@gestionversion.acn:applications_lutece/lutece-ecom-plugin-tipi.git']]
             ])
         }
     }
