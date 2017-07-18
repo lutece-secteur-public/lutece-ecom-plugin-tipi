@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.tipi.web;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -71,7 +72,7 @@ public class TipiServlet extends HttpServlet
         try
         {
             Tipi.read( request ).process( );
-        } catch ( ServiceException e )
+        } catch ( RemoteException | ServiceException e )
         {
             AppLogService.error( "Impossible de lire les informations du paiement", e );
         }
@@ -95,7 +96,7 @@ public class TipiServlet extends HttpServlet
         try
         {
             Tipi.read( request ).process( );
-        } catch ( ServiceException e )
+        } catch ( RemoteException | ServiceException e )
         {
             AppLogService.error( "Impossible de lire les informations du paiement", e );
         }

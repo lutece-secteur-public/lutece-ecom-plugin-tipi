@@ -8,9 +8,9 @@ import java.io.StringWriter;
 
 import javax.xml.rpc.ServiceException;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.vdp.tipi.create.url.webservice.CreateURLWebService;
 
 /**
@@ -19,8 +19,6 @@ import fr.paris.vdp.tipi.create.url.webservice.CreateURLWebService;
  */
 public class Utils
 {
-    private static final Logger logger = Logger.getLogger( "lutece" );
-
     private Utils( )
     {
     }
@@ -43,7 +41,7 @@ public class Utils
             objectMapper.writeValue( stringEmp, obj );
         } catch ( IOException e )
         {
-            logger.error( "erreur lors de la conversion : " + e.getMessage( ) );
+            AppLogService.error( "erreur lors de la conversion : " + e.getMessage( ) );
             throw new ServiceException( e );
         }
         return stringEmp.toString( );
