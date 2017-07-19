@@ -24,9 +24,9 @@
 	</properties>
 
 	<scm>
-		<connection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/applications/C22-Evac/trunk/plugin-evac</connection> 
+		<connection>scm:git:git://gestionversion.acn:applications_lutece/lutece-ecom-plugin-tipi.git</connection> 
 	</scm>
-
+	
 	<distributionManagement>
 		<repository>
 			<id>lutece_releases_repository</id>
