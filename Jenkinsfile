@@ -44,29 +44,24 @@ pipeline {
             }
         }
 
-        stage('Nexus + Plugin Sonar-Gitlab') {
-            tools { jdk "jdk8" }
-            when { expression { BRANCH_NAME ==~ /^feature.*/ } }
-            steps {
-                configFileProvider(
-                        [configFile(fileId: 'maven-settings', variable: 'MAVEN_SETTINGS')]) {
-                    echo 'Upload des artefacts sur nexus...'
-                    sh 'mvn -s $MAVEN_SETTINGS deploy'
-                }
-                echo 'Analyse sonar des commits...'
-                sh '/home/docker_app/scripts_indus/plugin_gitlab_sonar_evolution.sh plugin-tipi $WORKSPACE'
-
-            }
-        }
-
-        stage('Analyse Sonar') {
+        stage('Deploy Nexus + Analyse Sonar') {
             tools { jdk "jdk8" }
             when { branch 'develop' }
             steps {
                 configFileProvider(
                         [configFile(fileId: 'maven-settings', variable: 'MAVEN_SETTINGS')]) {
+                    sh 'mvn -s $MAVEN_SETTINGS deploy'
                     sh 'mvn -s $MAVEN_SETTINGS sonar:sonar'
                 }
+            }
+        }
+
+        stage('Plugin Sonar-Gitlab') {
+            tools { jdk "jdk8" }
+            when { expression { BRANCH_NAME ==~ /^feature.*/ } }
+            steps {
+                echo 'Analyse sonar des commits...'
+                sh "/home/docker_app/scripts_indus/plugin_gitlab_sonar_evolution.sh plugin-tipi $WORKSPACE"
             }
         }
 
@@ -76,8 +71,8 @@ pipeline {
             steps {
                 echo 'Mise à jour github'
                 sshagent(['gitlab-credentials']) {
-                    sh 'ssh -o StrictHostKeyChecking=no -l git gestionversion.acn cd /home/git/repositories/plugin-tipi && git fetch && git checkout master ' +
-                            '&& git pull origin master && git push github master'
+                    sh "ssh -o StrictHostKeyChecking=no -l git gestionversion.acn cd /home/git/repositories/plugin-tipi && git fetch && git checkout master " +
+                            "&& git pull origin master && git push github master"
                 }
 
             }
@@ -89,7 +84,7 @@ pipeline {
 
     post {
         always {
-            echo 'autheur: $CHANGE_AUTHOR_EMAIL'
+            echo "autheur is $CHANGE_AUTHOR_EMAIL"
         }
     }
 
