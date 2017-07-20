@@ -84,7 +84,7 @@ pipeline {
 
     post {
         always {
-            echo "autheur is $CHANGE_AUTHOR_EMAIL"
+            echo "autheur is $CHANGE_AUTHOR"
         }
     }
 
