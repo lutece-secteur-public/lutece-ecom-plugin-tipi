@@ -84,7 +84,8 @@ pipeline {
 
     post {
         always {
-            echo "autheur is $CHANGE_AUTHOR"
+            sh "echo ${env.CHANGE_AUTHOR_EMAIL}"
+            sh "echo ${env.CHANGE_AUTHOR}"
         }
     }
 
