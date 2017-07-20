@@ -70,9 +70,8 @@ pipeline {
             when { branch 'master' }
             steps {
                 echo 'Mise à jour github'
-                sshagent(['gitlab-credentials']) {
-                    sh "ssh -o StrictHostKeyChecking=no -l git gestionversion.acn cd /home/git/repositories/plugin-tipi && git fetch && git checkout master " +
-                            "&& git pull origin master && git push github master"
+                sshagent(['git-credentials']) {
+                    sh "ssh -o StrictHostKeyChecking=no -l git gestionversion.acn synchro-github.sh /home/git/repositories/plugin-tipi"
                 }
 
             }
