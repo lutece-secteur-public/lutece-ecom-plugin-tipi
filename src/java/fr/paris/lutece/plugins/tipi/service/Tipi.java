@@ -51,6 +51,13 @@ public class Tipi implements Serializable
 
     private Tipi( )
     {
+        /* Init (or re-init) certificate each time we use Tipi. */
+        this.setCertificateValues( );
+    }
+
+    private static Tipi newInstance( )
+    {
+        return new Tipi( );
     }
 
     /**
@@ -68,8 +75,7 @@ public class Tipi implements Serializable
      */
     public static Tipi create( String email, String refDet, BigDecimal amount ) throws RemoteException, ServiceException
     {
-        Tipi tipi = new Tipi( );
-        tipi.setCertificateValues( );
+        Tipi tipi = newInstance( );
 
         final String urlWsdl = getWsdlUrl( );
 
@@ -94,8 +100,7 @@ public class Tipi implements Serializable
      */
     public static Tipi read( String idOp ) throws ServiceException, RemoteException
     {
-        Tipi tipi = new Tipi( );
-        tipi.setCertificateValues( );
+        Tipi tipi = newInstance( );
 
         final String urlWsdl = getWsdlUrl( );
 
