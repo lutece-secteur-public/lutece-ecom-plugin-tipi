@@ -61,17 +61,22 @@ pipeline {
             when { expression { BRANCH_NAME ==~ /^feature.*/ } }
             steps {
                 echo 'Analyse sonar des commits...'
-                sh "/home/docker_app/scripts_indus/plugin_gitlab_sonar_evolution.sh plugin-tipi $WORKSPACE"
+                sh "/home/docker_app/scripts_indus/plugin_gitlab_sonar_evolution.sh $WORKSPACE"
             }
         }
 
         // Github
         stage('Synchro gitHub') {
-            when { branch 'master' }
+            when {
+                anyOf {
+                    branch 'master'
+                    branch 'develop'
+                }
+            }
             steps {
                 echo 'Mise à jour github'
                 sshagent(['git-credentials']) {
-                    sh "ssh -o StrictHostKeyChecking=no -l git gestionversion.acn synchro-github.sh /home/git/repositories/plugin-tipi"
+                    sh "ssh -o StrictHostKeyChecking=no -l git gestionversion.acn synchro-github.sh $WORKSPACE $BRANCH_NAME"
                 }
 
             }
