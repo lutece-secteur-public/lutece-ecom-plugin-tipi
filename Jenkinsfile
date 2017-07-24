@@ -12,6 +12,10 @@ pipeline {
         }
     }
 
+    environment {
+        LAST_COMMIT_SHA = ''
+    }
+
     options {
         buildDiscarder(logRotator(numToKeepStr: '2'))
         timeout(time: 10, unit: 'MINUTES')
@@ -44,7 +48,24 @@ pipeline {
             }
         }
 
-        stage('Deploy Nexus + Analyse Sonar') {
+        stage('Analyse sonar of the last commit') {
+            tools { jdk "jdk8" }
+            when { expression { BRANCH_NAME ==~ /^feature.*/ } }
+            steps {
+                echo 'Analyse sonar des commits...'
+                script {
+                    def commitSha = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+                    LAST_COMMIT_SHA = commitSha
+                    echo "Last commit SHA: ${LAST_COMMIT_SHA}"
+                }
+                configFileProvider(
+                        [configFile(fileId: 'maven-settings', variable: 'MAVEN_SETTINGS')]) {
+                    sh "mvn -s $MAVEN_SETTINGS verify sonar:sonar -Dmaven.test.skip=true -Dsonar.analysis.mode=preview -Dsonar.issuesReport.console.enable=true -Dsonar.gitlab.commit_sha=${LAST_COMMIT_SHA}"
+                }
+            }
+        }
+
+        stage('Deploy Nexus + Full analyse Sonar') {
             tools { jdk "jdk8" }
             when { branch 'develop' }
             steps {
@@ -56,34 +77,54 @@ pipeline {
             }
         }
 
-        stage('Plugin Sonar-Gitlab') {
-            tools { jdk "jdk8" }
-            when { expression { BRANCH_NAME ==~ /^feature.*/ } }
-            steps {
-                echo 'Analyse sonar des commits...'
-                sh "/home/docker_app/scripts_indus/plugin_gitlab_sonar_evolution.sh $WORKSPACE"
-            }
-        }
-
         // Github
         stage('Synchro gitHub') {
-            when {
-                anyOf {
-                    branch 'master'
-                    branch 'develop'
-                }
-            }
+            when { branch 'develop' }
             steps {
                 echo 'Mise à jour github'
                 sshagent(['git-credentials']) {
-                    sh "ssh -o StrictHostKeyChecking=no -l git gestionversion.acn synchro-github.sh $WORKSPACE $BRANCH_NAME"
+                    sh "ssh -o StrictHostKeyChecking=no -l gitlab gestionversion.acn synchro-github.sh $WORKSPACE $BRANCH_NAME"
                 }
-
             }
         }
 
-        // mvn release:prepare release:perform -Dresume=false -Dusername=XXX -Dpassword=XXX
+        stage('Release') {
+            when { branch 'develop' }
+            steps {
+                script {
 
+                    // Read pom.xml
+                    def pom = readMavenPom file: 'pom.xml'
+                    // Assign the default release version
+                    def release_version = pom.version.replace("-SNAPSHOT", "")
+                    // Increase the default next development version
+                    def next_version = pom.version.toString().replace("-SNAPSHOT", "").split("\\.")
+                    version[-1] = version[-1].toInteger() + 1
+                    DEFAULT_DEVELOPMENT_VERSION = version.join('.') + "-SNAPSHOT"
+
+                    PARAMS = input message: 'Perform realease ?', ok: 'Release!',
+                            parameters: [
+                                    string(name: 'RELEASE_VERSION', defaultValue: "${release_version}", description: 'What is the release version'),
+                                    string(name: 'NEXT_VERSION', defaultValue: "${next_version}", description: 'What is the development version')
+                            ]
+
+                    configFileProvider(
+                            [configFile(fileId: 'maven-settings', variable: 'MAVEN_SETTINGS')]) {
+                        sh "mvn -s $MAVEN_SETTINGS release:prepare release:perform -Dresume=false -DreleaseVersion=${PARAMS.RELEASE_VERSION} -DdevelopmentVersion=${PARAMS.NEXT_VERSION} -Darguments='-Dmaven.test.skip=true' -DignoreSnapshots=true -Dgoals=deploy"
+                    }
+
+                    echo "Mise à jour github"
+                    sshagent(['git-credentials']) {
+                        sh "ssh -o StrictHostKeyChecking=no -l gitlab gestionversion.acn realease-github $WORKSPACE"
+                    }
+                }
+            }
+            post {
+                failure {
+                    sh "mvn release:rollback"
+                }
+            }
+        }
     }
 
     post {
