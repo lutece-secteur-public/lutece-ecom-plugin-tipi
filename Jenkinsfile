@@ -18,7 +18,7 @@ pipeline {
 
     options {
         buildDiscarder(logRotator(numToKeepStr: '2'))
-        timeout(time: 10, unit: 'MINUTES')
+        timeout(time: 5, unit: 'MINUTES')
         gitLabConnection('gitlab')
         gitlabCommitStatus(name: 'pending')
     }
@@ -124,13 +124,6 @@ pipeline {
                     sh "mvn release:rollback"
                 }
             }
-        }
-    }
-
-    post {
-        always {
-            echo "${env.CHANGE_AUTHOR_EMAIL}"
-            echo "${env.CHANGE_AUTHOR}"
         }
     }
 

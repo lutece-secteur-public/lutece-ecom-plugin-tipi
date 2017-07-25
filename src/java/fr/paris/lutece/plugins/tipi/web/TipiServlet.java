@@ -93,13 +93,7 @@ public class TipiServlet extends HttpServlet
     @Override
     protected final void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
     {
-        try
-        {
-            Tipi.read( request ).process( );
-        } catch ( RemoteException | ServiceException e )
-        {
-            AppLogService.error( "Impossible de lire les informations du paiement", e );
-        }
+        doGet( request, response );
     }
 
 }
