@@ -98,9 +98,9 @@ pipeline {
                     // Assign the default release version
                     def release_version = pom.version.replace("-SNAPSHOT", "")
                     // Increase the default next development version
-                    def next_version = pom.version.toString().replace("-SNAPSHOT", "").split("\\.")
+                    def version = pom.version.toString().replace("-SNAPSHOT", "").split("\\.")
                     version[-1] = version[-1].toInteger() + 1
-                    DEFAULT_DEVELOPMENT_VERSION = version.join('.') + "-SNAPSHOT"
+                    def next_version = version.join('.') + "-SNAPSHOT"
 
                     PARAMS = input message: 'Perform realease ?', ok: 'Release!',
                             parameters: [
@@ -127,11 +127,11 @@ pipeline {
         }
     }
 
-//    post {
-//        always {
-//            sh "echo ${CHANGE_AUTHOR_EMAIL}"
-//            sh "echo ${CHANGE_AUTHOR}"
-//        }
-//    }
+    post {
+        always {
+            echo "${env.CHANGE_AUTHOR_EMAIL}"
+            echo "${env.CHANGE_AUTHOR}"
+        }
+    }
 
 }
