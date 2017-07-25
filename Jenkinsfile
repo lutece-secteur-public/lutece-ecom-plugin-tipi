@@ -14,13 +14,14 @@ pipeline {
 
     environment {
         LAST_COMMIT_SHA = ''
+        PARAMS = ''
     }
 
     options {
         buildDiscarder(logRotator(numToKeepStr: '2'))
         timeout(time: 5, unit: 'MINUTES')
         gitLabConnection('gitlab')
-        gitlabCommitStatus(name: 'pending')
+        gitlabCommitStatus(name: 'running')
     }
 
     stages {
@@ -42,9 +43,7 @@ pipeline {
         // BUILD
         stage('Compile - Tests') {
             steps {
-                gitlabCommitStatus {
-                    sh 'mvn clean install'
-                }
+                sh 'mvn clean install'
             }
         }
 
@@ -88,11 +87,11 @@ pipeline {
             }
         }
 
-        stage('Release') {
+        stage('Release Prepare') {
             when { branch 'develop' }
+            agent { none }
             steps {
                 script {
-
                     // Read pom.xml
                     def pom = readMavenPom file: 'pom.xml'
                     // Assign the default release version
@@ -102,12 +101,27 @@ pipeline {
                     version[-1] = version[-1].toInteger() + 1
                     def next_version = version.join('.') + "-SNAPSHOT"
 
-                    PARAMS = input message: 'Perform realease ?', ok: 'Release!',
-                            parameters: [
-                                    string(name: 'RELEASE_VERSION', defaultValue: "${release_version}", description: 'What is the release version'),
-                                    string(name: 'NEXT_VERSION', defaultValue: "${next_version}", description: 'What is the development version')
-                            ]
+                    try {
+                        timeout(time: 1, unit: 'MINUTES') {
+                            PARAMS = input message: 'Perform realease ?', ok: 'Release!',
+                                    parameters: [
+                                            string(name: 'RELEASE_VERSION', defaultValue: "${release_version}", description: 'What is the release version'),
+                                            string(name: 'NEXT_VERSION', defaultValue: "${next_version}", description: 'What is the development version')
+                                    ]
+                        }
 
+                    } catch (err) {
+                        currentBuild.result = "SUCCESS"
+                    }
+                }
+            }
+
+            stage('Release Perform') {
+                when {
+                    not { environment name: 'PARAMS', value: '' }
+                    branch 'develop'
+                }
+                steps {
                     configFileProvider(
                             [configFile(fileId: 'maven-settings', variable: 'MAVEN_SETTINGS')]) {
                         sh "mvn -s $MAVEN_SETTINGS release:prepare release:perform -Dresume=false -DreleaseVersion=${PARAMS.RELEASE_VERSION} -DdevelopmentVersion=${PARAMS.NEXT_VERSION} -Darguments='-Dmaven.test.skip=true' -DignoreSnapshots=true -Dgoals=deploy"
@@ -117,14 +131,14 @@ pipeline {
                     sshagent(['git-credentials']) {
                         sh "ssh -o StrictHostKeyChecking=no -l gitlab gestionversion.acn scripts/realease-github.sh plugin-tipi"
                     }
+
                 }
-            }
-            post {
-                failure {
-                    sh "mvn release:rollback"
+                post {
+                    failure {
+                        sh "mvn release:rollback"
+                    }
                 }
             }
         }
-    }
 
-}
+    }
