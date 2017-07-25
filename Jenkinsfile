@@ -115,15 +115,15 @@ pipeline {
 
                     echo "Mise à jour github"
                     sshagent(['git-credentials']) {
-                        sh "ssh -o StrictHostKeyChecking=no -l gitlab gestionversion.acn scripts/realease-github.sh plugin-tipi "
+                        sh "ssh -o StrictHostKeyChecking=no -l gitlab gestionversion.acn scripts/realease-github.sh plugin-tipi"
                     }
                 }
             }
-//            post {
-//                failure {
-//                    sh "mvn release:rollback"
-//                }
-//            }
+            post {
+                failure {
+                    sh "mvn release:rollback"
+                }
+            }
         }
     }
 
