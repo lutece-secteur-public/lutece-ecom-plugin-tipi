@@ -83,7 +83,7 @@ pipeline {
             steps {
                 echo 'Mise à jour github'
                 sshagent(['git-credentials']) {
-                    sh "ssh -o StrictHostKeyChecking=no -l gitlab gestionversion.acn scripts/synchro-github.sh $WORKSPACE $BRANCH_NAME"
+                    sh "ssh -o StrictHostKeyChecking=no -l gitlab gestionversion.acn scripts/synchro-github.sh plugin-tipi $BRANCH_NAME"
                 }
             }
         }
@@ -115,23 +115,23 @@ pipeline {
 
                     echo "Mise à jour github"
                     sshagent(['git-credentials']) {
-                        sh "ssh -o StrictHostKeyChecking=no -l gitlab gestionversion.acn scripts/realease-github.sh $WORKSPACE"
+                        sh "ssh -o StrictHostKeyChecking=no -l gitlab gestionversion.acn scripts/realease-github.sh plugin-tipi "
                     }
                 }
             }
-            post {
-                failure {
-                    sh "mvn release:rollback"
-                }
-            }
+//            post {
+//                failure {
+//                    sh "mvn release:rollback"
+//                }
+//            }
         }
     }
 
-    post {
-        always {
-            sh "echo ${env.CHANGE_AUTHOR_EMAIL}"
-            sh "echo ${env.CHANGE_AUTHOR}"
-        }
-    }
+//    post {
+//        always {
+//            sh "echo ${CHANGE_AUTHOR_EMAIL}"
+//            sh "echo ${CHANGE_AUTHOR}"
+//        }
+//    }
 
 }
