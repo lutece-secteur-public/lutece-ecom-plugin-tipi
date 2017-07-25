@@ -83,7 +83,7 @@ pipeline {
             steps {
                 echo 'Mise à jour github'
                 sshagent(['git-credentials']) {
-                    sh "ssh -o StrictHostKeyChecking=no -l gitlab gestionversion.acn synchro-github.sh $WORKSPACE $BRANCH_NAME"
+                    sh "ssh -o StrictHostKeyChecking=no -l gitlab gestionversion.acn scripts/synchro-github.sh $WORKSPACE $BRANCH_NAME"
                 }
             }
         }
@@ -115,7 +115,7 @@ pipeline {
 
                     echo "Mise à jour github"
                     sshagent(['git-credentials']) {
-                        sh "ssh -o StrictHostKeyChecking=no -l gitlab gestionversion.acn realease-github $WORKSPACE"
+                        sh "ssh -o StrictHostKeyChecking=no -l gitlab gestionversion.acn scripts/realease-github.sh $WORKSPACE"
                     }
                 }
             }
