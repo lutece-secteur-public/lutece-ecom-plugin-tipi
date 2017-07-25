@@ -9,7 +9,7 @@ To use the plugin, first add the plugin to your pom.xml :
     <dependency>
         <groupId>fr.paris.lutece.plugins</groupId>
         <artifactId>plugin-tipi</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
         <type>lutece-plugin</type>
     </dependency>
 ```

@@ -18,7 +18,7 @@ pipeline {
 
     options {
         buildDiscarder(logRotator(numToKeepStr: '2'))
-        timeout(time: 10, unit: 'MINUTES')
+        timeout(time: 5, unit: 'MINUTES')
         gitLabConnection('gitlab')
         gitlabCommitStatus(name: 'pending')
     }
@@ -128,9 +128,8 @@ pipeline {
     }
 
     post {
-        always {
-            echo "${env.CHANGE_AUTHOR_EMAIL}"
-            echo "${env.CHANGE_AUTHOR}"
+        failure {
+            gitlabCommitStatus(name: 'failed')
         }
     }
 
