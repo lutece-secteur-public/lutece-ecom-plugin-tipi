@@ -61,7 +61,7 @@ public abstract class TipiProcessor implements Serializable
      * 
      * @param tipi
      *            la connexion Tipi
-     * @return
+     * @return l'instance de gestion de Tipi
      */
     public Tipi process( Tipi tipi )
     {
