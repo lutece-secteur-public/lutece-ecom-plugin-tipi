@@ -5,7 +5,7 @@
     <parent>
         <artifactId>lutece-global-pom</artifactId>
         <groupId>fr.paris.lutece.tools</groupId>
-        <version>3.0.3</version>
+        <version>4.0.3</version>
     </parent>
 
     <groupId>fr.paris.lutece.plugins</groupId>
