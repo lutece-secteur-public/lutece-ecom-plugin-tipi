@@ -127,7 +127,7 @@ pipeline {
                     sh "mvn -s $MAVEN_SETTINGS release:prepare release:perform -Dresume=false -DreleaseVersion=${PARAMS.RELEASE_VERSION} -DdevelopmentVersion=${PARAMS.NEXT_VERSION} -Darguments='-Dmaven.test.skip=true' -DignoreSnapshots=true -Dgoals=deploy"
                 }
                 sshagent(['git-credentials']) {
-                    sh "ssh -o StrictHostKeyChecking=no -l gitlab gestionversion.acn scripts/realease-github.sh plugin-tipi"
+                    sh "ssh -o StrictHostKeyChecking=no -l gitlab gestionversion.acn scripts/release-github.sh plugin-tipi"
                 }
             }
             post {
