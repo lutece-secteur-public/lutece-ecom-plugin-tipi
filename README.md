@@ -32,6 +32,9 @@ tipi.url = client
 ```
 > Note : `tipi.urlnotif` must be ending with `servlet/plugins/tipi/return` which is the default url of the Tipi socket.
 
+> Certificat Tipi :
+> * You can download it directly from their website then added it to your keystore
+> * You can leave the 'truststore' and  'keystore' properties empty and put the certificat which must be named cacerts inside your classpath in ressources/security
 * Then implement a service named `tipiProcessor` which extends the `TipiProcessor` abstract class:
 ```java
 import java.util.List;
