@@ -4,7 +4,7 @@
 The Lutece Tipi plugin is made to simplify the use of Tipi. It offers a simple interface to read, create and handle transactions.
 
 ## Getting started
-To use the plugin, first add the plugin to your pom.xml :
+* To use the plugin, first add the plugin to your pom.xml :
 ```xml
     <dependency>
         <groupId>fr.paris.lutece.plugins</groupId>
@@ -13,7 +13,26 @@ To use the plugin, first add the plugin to your pom.xml :
         <type>lutece-plugin</type>
     </dependency>
 ```
-Then implement a service named `tipiProcessor` which extends the `TipiProcessor` abstract class:
+* Create a WEB-INF/conf/override/plugins/tipi.properties file to override default configuration.
+
+```properties
+#Tipi
+tipi.numcli = 123456
+tipi.prefixerefdet = 
+tipi.objet = Subject
+tipi.urlwsdl = https://www.tipi-client.budget.gouv.fr/tpa/services/securite
+tipi.urlnotif = http://fakehost/servlet/plugins/tipi/return
+tipi.urlredirect= http://fakehost/jsp/site/Portal.jsp?page=dossier&view=confirmation_paiement
+tipi.saisie = T
+tipi.ssl.truststore = /path/to/truststore
+tipi.ssl.truststore.password = p4sSw0rD
+tipi.ssl.keystore = /path/to/keystore
+tipi.ssl.keystore.password = p4sSw0rD
+tipi.url = client
+```
+> Note : `tipi.urlnotif` must be ending with `servlet/plugins/tipi/return` which is the default url of the Tipi socket.
+
+* Then implement a service named `tipiProcessor` which extends the `TipiProcessor` abstract class:
 ```java
 import java.util.List;
 import org.springframework.stereotype.Service;
