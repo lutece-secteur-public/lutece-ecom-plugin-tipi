@@ -25,9 +25,9 @@
     </properties>
 
     <scm>
-        <connection>scm:git:http://gestionversion.acn/Utilitaires/scripts_indus.git</connection>
-        <developerConnection>scm:git:http://gestionversion.acn/Utilitaires/scripts_indus.git</developerConnection>
-        <url>http://gestionversion.acn/Utilitaires/scripts_indus.git</url>
+        <connection>scm:git:http://gestionversion.acn/applications_lutece/lutece-ecom-plugin-tipi.git</connection>
+        <developerConnection>scm:git:http://gestionversion.acn/applications_lutece/lutece-ecom-plugin-tipi.git</developerConnection>
+        <url>http://gestionversion.acn/applications_lutece/lutece-ecom-plugin-tipi.git</url>
         <tag>HEAD</tag>
     </scm>
 	
