@@ -2,7 +2,7 @@ pipeline {
 
     tools {
         maven 'maven-3.3.9'
-        jdk "jdk7"
+        jdk "jdk8"
     }
 
     agent {
@@ -14,7 +14,9 @@ pipeline {
 
     environment {
         LAST_COMMIT_SHA = ''
-        PARAMS = ''
+        LAST_COMMIT_MSG = ''
+        COMMIT_TO_SKIP = '[maven-release-plugin] prepare release'
+        PARAMS = 'empty'
     }
 
     options {
@@ -37,11 +39,17 @@ pipeline {
                         userRemoteConfigs                : [[credentialsId: 'gitlab-credentials',
                                                              url          : 'git@gestionversion.acn:applications_lutece/lutece-ecom-plugin-tipi.git']]
                 ])
+
+                script {
+                    LAST_COMMIT_SHA = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+                    LAST_COMMIT_MSG = sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
+                }
             }
         }
 
         // BUILD
         stage('Compile - Tests') {
+            when { expression { !LAST_COMMIT_MSG.contains(COMMIT_TO_SKIP) } }
             steps {
                 sh 'mvn clean install'
             }
@@ -49,14 +57,14 @@ pipeline {
 
         stage('Analyse sonar of the last commit') {
             tools { jdk "jdk8" }
-            when { expression { BRANCH_NAME ==~ /^feature.*/ } }
-            steps {
-                echo 'Analyse sonar des commits...'
-                script {
-                    def commitSha = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-                    LAST_COMMIT_SHA = commitSha
-                    echo "Last commit SHA: ${LAST_COMMIT_SHA}"
+            when {
+                allOf {
+                    expression { BRANCH_NAME ==~ /^feature.*/ }
+                    expression { !LAST_COMMIT_MSG.contains(COMMIT_TO_SKIP) }
                 }
+            }
+            steps {
+                echo "Analyse du commit SHA: ${LAST_COMMIT_SHA}"
                 configFileProvider(
                         [configFile(fileId: 'maven-settings', variable: 'MAVEN_SETTINGS')]) {
                     sh "mvn -s $MAVEN_SETTINGS verify sonar:sonar -Dmaven.test.skip=true -Dsonar.analysis.mode=preview -Dsonar.issuesReport.console.enable=true -Dsonar.gitlab.commit_sha=${LAST_COMMIT_SHA}"
@@ -66,7 +74,10 @@ pipeline {
 
         stage('Deploy Nexus + Full analyse Sonar') {
             tools { jdk "jdk8" }
-            when { branch 'develop' }
+            when {
+                expression { !LAST_COMMIT_MSG.contains(COMMIT_TO_SKIP) }
+                branch 'develop'
+            }
             steps {
                 configFileProvider(
                         [configFile(fileId: 'maven-settings', variable: 'MAVEN_SETTINGS')]) {
@@ -78,7 +89,10 @@ pipeline {
 
         // Github
         stage('Synchro gitHub') {
-            when { branch 'develop' }
+            when {
+                expression { !LAST_COMMIT_MSG.contains(COMMIT_TO_SKIP) }
+                branch 'develop'
+            }
             steps {
                 echo 'Mise à jour github'
                 sshagent(['git-credentials']) {
@@ -88,7 +102,10 @@ pipeline {
         }
 
         stage('Release Prepare') {
-            when { branch 'develop' }
+            when {
+                expression { !LAST_COMMIT_MSG.contains(COMMIT_TO_SKIP) }
+                branch 'develop'
+            }
             agent none
             steps {
                 script {
@@ -118,7 +135,7 @@ pipeline {
 
         stage('Release Perform') {
             when {
-                not { environment name: 'PARAMS', value: '' }
+                expression { PARAMS != 'empty' }
                 branch 'develop'
             }
             steps {
@@ -136,5 +153,6 @@ pipeline {
                 }
             }
         }
+
     }
 }
