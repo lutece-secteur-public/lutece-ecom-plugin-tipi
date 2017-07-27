@@ -4,16 +4,38 @@
 The Lutece Tipi plugin is made to simplify the use of Tipi. It offers a simple interface to read, create and handle transactions.
 
 ## Getting started
-To use the plugin, first add the plugin to your pom.xml :
+* To use the plugin, first add the plugin to your pom.xml :
 ```xml
     <dependency>
         <groupId>fr.paris.lutece.plugins</groupId>
         <artifactId>plugin-tipi</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
         <type>lutece-plugin</type>
     </dependency>
 ```
-Then implement a service named `tipiProcessor` which extends the `TipiProcessor` abstract class:
+* Create a WEB-INF/conf/override/plugins/tipi.properties file to override default configuration.
+
+```properties
+#Tipi
+tipi.numcli = 123456
+tipi.prefixerefdet = 
+tipi.objet = Subject
+tipi.urlwsdl = https://www.tipi-client.budget.gouv.fr/tpa/services/securite
+tipi.urlnotif = http://fakehost/servlet/plugins/tipi/return
+tipi.urlredirect= http://fakehost/jsp/site/Portal.jsp?page=dossier&view=confirmation_paiement
+tipi.saisie = T
+tipi.ssl.truststore = /path/to/truststore
+tipi.ssl.truststore.password = p4sSw0rD
+tipi.ssl.keystore = /path/to/keystore
+tipi.ssl.keystore.password = p4sSw0rD
+tipi.url = client
+```
+> Note : `tipi.urlnotif` must be ending with `servlet/plugins/tipi/return` which is the default url of the Tipi socket.
+
+> Certificat Tipi :
+> * You can download it directly from their website then added it to your keystore
+> * You can leave the 'truststore' and  'keystore' properties empty and put the certificat which must be named cacerts inside your classpath in ressources/security
+* Then implement a service named `tipiProcessor` which extends the `TipiProcessor` abstract class:
 ```java
 import java.util.List;
 import org.springframework.stereotype.Service;

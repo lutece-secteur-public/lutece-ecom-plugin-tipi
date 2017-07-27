@@ -27,8 +27,7 @@ import fr.paris.vdp.tipi.create.url.webservice.CreateURLWebService;
 import fr.paris.vdp.tipi.create.url.webservice.ParametresPaiementTipi;
 
 /**
- * @author stephane.raynaud
- *
+ * Classe de gestion du paiement Tipi
  */
 public class Tipi implements Serializable
 {
@@ -51,6 +50,13 @@ public class Tipi implements Serializable
 
     private Tipi( )
     {
+        /* Init (or re-init) certificate each time we use Tipi. */
+        this.setCertificateValues( );
+    }
+
+    private static Tipi newInstance( )
+    {
+        return new Tipi( );
     }
 
     /**
@@ -62,14 +68,13 @@ public class Tipi implements Serializable
      *            référence
      * @param amount
      *            montant
-     * @return
+     * @return l'instance de gestion de Tipi
      * @throws RemoteException
      * @throws ServiceException
      */
     public static Tipi create( String email, String refDet, BigDecimal amount ) throws RemoteException, ServiceException
     {
-        Tipi tipi = new Tipi( );
-        tipi.setCertificateValues( );
+        Tipi tipi = newInstance( );
 
         final String urlWsdl = getWsdlUrl( );
 
@@ -88,14 +93,13 @@ public class Tipi implements Serializable
      * 
      * @param idOp
      *            l'identifiant du paiement
-     * @return
+     * @return l'instance de gestion de Tipi
      * @throws ServiceException
      * @throws RemoteException
      */
     public static Tipi read( String idOp ) throws ServiceException, RemoteException
     {
-        Tipi tipi = new Tipi( );
-        tipi.setCertificateValues( );
+        Tipi tipi = newInstance( );
 
         final String urlWsdl = getWsdlUrl( );
 
@@ -116,7 +120,7 @@ public class Tipi implements Serializable
      * 
      * @param request
      *            la requete http contenant le paramètre idOp ou idop
-     * @return
+     * @return l'instance de gestion de Tipi
      * @throws RemoteException
      * @throws ServiceException
      */
@@ -168,7 +172,9 @@ public class Tipi implements Serializable
     }
 
     /**
-     * @return the identifier
+     * Récupère l'identifiant de transaction Tipi
+     * 
+     * @return l'identifiant de transaction Tipi
      */
     public String getIdentifier( )
     {
@@ -176,7 +182,9 @@ public class Tipi implements Serializable
     }
 
     /**
-     * @return the parameters
+     * Récupère les paramètres de la transaction
+     * 
+     * @return les paramètres de la transaction
      */
     public ParametresPaiementTipi getParameters( )
     {
@@ -207,10 +215,10 @@ public class Tipi implements Serializable
     }
 
     /**
-     * Retourne les paramètres d'un paiement Tipi directement
+     * Retourne les paramètres d'une transaction Tipi
      * 
      * @param idop
-     * @return
+     * @return les paramètres de la transaction
      * @throws RemoteException
      * @throws ServiceException
      */
@@ -220,7 +228,9 @@ public class Tipi implements Serializable
     }
 
     /**
-     * @return
+     * Retourne un booléen indiquant si le paiement est un succès
+     * 
+     * @return vrai si le paiement est un succès
      */
     public boolean isPaymentSuccess( )
     {
@@ -228,7 +238,9 @@ public class Tipi implements Serializable
     }
 
     /**
-     * @return
+     * Retourne un booléen indiquant si le paiement est refusé
+     * 
+     * @return vrai si le paiement est refusé
      */
     public boolean isPaymentDenied( )
     {
@@ -236,7 +248,9 @@ public class Tipi implements Serializable
     }
 
     /**
-     * @return
+     * Retourne un booléen indiquant si le paiement est annulé
+     * 
+     * @return vrai si le paiement est annulé
      */
     public boolean isPaymentCancelled( )
     {
@@ -246,7 +260,7 @@ public class Tipi implements Serializable
     /**
      * Gère le résultat dans le result handler
      * 
-     * @return
+     * @return l'instance de gestion de Tipi
      */
     public Tipi process( )
     {

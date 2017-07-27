@@ -1,16 +1,15 @@
-﻿<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <artifactId>lutece-global-pom</artifactId>
         <groupId>fr.paris.lutece.tools</groupId>
-        <version>3.0.3</version>
+        <version>4.0.3</version>
     </parent>
 
     <groupId>fr.paris.lutece.plugins</groupId>
     <artifactId>plugin-tipi</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>lutece-plugin</packaging>
 
     <name>Tipi Plugin</name>
@@ -25,10 +24,10 @@
     </properties>
 
     <scm>
-        <connection>scm:git:http://gestionversion.acn/Utilitaires/scripts_indus.git</connection>
-        <developerConnection>scm:git:http://gestionversion.acn/Utilitaires/scripts_indus.git</developerConnection>
-        <url>http://gestionversion.acn/Utilitaires/scripts_indus.git</url>
-        <tag>HEAD</tag>
+        <connection>scm:git:http://gestionversion.acn/applications_lutece/lutece-ecom-plugin-tipi.git</connection>
+        <developerConnection>scm:git:http://gestionversion.acn/applications_lutece/lutece-ecom-plugin-tipi.git</developerConnection>
+        <url>http://gestionversion.acn/applications_lutece/lutece-ecom-plugin-tipi.git</url>
+        <tag>plugin-tipi-1.0.0</tag>
     </scm>
 	
     <distributionManagement>
@@ -90,7 +89,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.1</version>
+                <version>2.5.3</version>
                 <configuration>
                     <tagNameFormat>${project.artifactId}-@{project.version}</tagNameFormat>
                     <providerImplementations>
