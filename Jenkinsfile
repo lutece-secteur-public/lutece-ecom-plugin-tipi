@@ -141,7 +141,10 @@ pipeline {
             steps {
                 configFileProvider(
                         [configFile(fileId: 'maven-settings', variable: 'MAVEN_SETTINGS')]) {
-                    sh "mvn -s $MAVEN_SETTINGS release:prepare release:perform -Dresume=false -DreleaseVersion=${PARAMS.RELEASE_VERSION} -DdevelopmentVersion=${PARAMS.NEXT_VERSION} -Darguments='-Dmaven.test.skip=true' -DignoreSnapshots=true -Dgoals=deploy"
+                    withCredentials([usernamePassword(credentialsId: 'gitlab-http-credentials', passwordVariable: 'pwd', usernameVariable: 'user')]) {
+                        sh "mvn -s $MAVEN_SETTINGS release:prepare release:perform -Dresume=false -DreleaseVersion=${PARAMS.RELEASE_VERSION} -DdevelopmentVersion=${PARAMS.NEXT_VERSION} " +
+                                "-Darguments='-Dmaven.test.skip=true' -DignoreSnapshots=true -Dgoals=deploy -Dusername=${user} -Dpassword=${pwd}"
+                    }
                 }
                 sshagent(['git-credentials']) {
                     sh "ssh -o StrictHostKeyChecking=no -l gitlab gestionversion.acn scripts/release-github.sh plugin-tipi"
