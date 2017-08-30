@@ -34,10 +34,9 @@ pipeline {
                         $class                           : 'GitSCM',
                         branches                         : [[name: BRANCH_NAME]],
                         doGenerateSubmoduleConfigurations: false,
-                        extensions                       : [],
+                        extensions                       : [[$class: 'LocalBranch', localBranch: BRANCH_NAME]],
                         submoduleCfg                     : [],
-                        userRemoteConfigs                : [[credentialsId: 'gitlab-credentials',
-                                                             url          : 'git@gestionversion.acn:applications_lutece/lutece-ecom-plugin-tipi.git']]
+                        userRemoteConfigs                : [[credentialsId: 'gitlab-credentials', url: 'git@gestionversion.acn:applications_lutece/lutece-ecom-plugin-tipi.git']]
                 ])
 
                 script {
