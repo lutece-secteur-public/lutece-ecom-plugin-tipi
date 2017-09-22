@@ -4,7 +4,7 @@
     <parent>
         <artifactId>lutece-global-pom</artifactId>
         <groupId>fr.paris.lutece.tools</groupId>
-        <version>4.0.3</version>
+        <version>3.0.9</version>
     </parent>
 
     <groupId>fr.paris.lutece.plugins</groupId>
@@ -76,6 +76,7 @@
             <groupId>fr.paris.lutece</groupId>
             <artifactId>lutece-core</artifactId>
             <version>5.1.0</version>
+            <type>lutece-core</type>
         </dependency>
 
         <dependency>
@@ -103,34 +104,6 @@
                         <version>1.9.2</version>
                     </dependency>
                 </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.4.201502262128</version>
-                <executions>
-                    <execution>
-                        <id>pre-unit-test</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <destFile>../target/coverage-reports/jacoco-unit.exec</destFile>
-                            <append>true</append>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>post-unit-test</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                        <configuration>
-                            <dataFile>../target/coverage-reports/jacoco-unit.exec</dataFile>
-                            <outputDirectory>../target/coverage-reports/jacoco-ut</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
