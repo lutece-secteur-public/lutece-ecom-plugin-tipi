@@ -39,8 +39,8 @@ tipi.url = client
 ```java
 import java.util.List;
 import org.springframework.stereotype.Service;
-import fr.paris.lutece.plugins.tipi.service.Tipi;
-import fr.paris.lutece.plugins.tipi.service.TipiProcessor;
+import fr.paris.lutece.plugins.tipi.business.Tipi;
+import fr.paris.lutece.plugins.tipi.business.TipiProcessor;
 
 @Service("tipiProcessor")
 public class SampleTipiProcessor extends TipiProcessor

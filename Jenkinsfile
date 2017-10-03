@@ -14,21 +14,27 @@ pipeline {
 
     environment {
         LAST_COMMIT_SHA = ''
-        LAST_COMMIT_MSG = ''
-        COMMIT_TO_SKIP = '[maven-release-plugin] prepare release'
-        PARAMS = 'empty'
+        INPUTS = ''
     }
 
     options {
         buildDiscarder(logRotator(numToKeepStr: '2'))
-        timeout(time: 5, unit: 'MINUTES')
+        timeout(time: 10, unit: 'MINUTES')
         gitLabConnection('gitlab')
         gitlabCommitStatus(name: 'running')
     }
 
+    parameters {
+        choice(choices: 'Build\nRelease', description: 'Choose what you want to do', name: 'action')
+    }
+
     stages {
 
-        stage('Clone repository') {
+        // CHECKOUT
+        stage('Cloning gitlab repository') {
+            when {
+                expression { params.action == 'Build' }
+            }
             steps {
                 checkout([
                         $class                           : 'GitSCM',
@@ -41,26 +47,26 @@ pipeline {
 
                 script {
                     LAST_COMMIT_SHA = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-                    LAST_COMMIT_MSG = sh(returnStdout: true, script: 'git log -1 --pretty=%B').trim()
                 }
             }
         }
 
         // BUILD
         stage('Compile - Tests') {
-            when { expression { !LAST_COMMIT_MSG.contains(COMMIT_TO_SKIP) } }
+            when {
+                expression { params.action == 'Build' }
+                not { branch 'master' }
+            }
             steps {
-                sh 'mvn clean install'
+                sh 'mvn clean compile'
             }
         }
 
+        // SONAR
         stage('Analyse sonar of the last commit') {
             tools { jdk "jdk8" }
             when {
-                allOf {
-                    expression { BRANCH_NAME ==~ /^feature.*/ }
-                    expression { !LAST_COMMIT_MSG.contains(COMMIT_TO_SKIP) }
-                }
+                expression { BRANCH_NAME ==~ /^feature.*/ }
             }
             steps {
                 echo "Analyse du commit SHA: ${LAST_COMMIT_SHA}"
@@ -74,8 +80,7 @@ pipeline {
         stage('Deploy Nexus + Full analyse Sonar') {
             tools { jdk "jdk8" }
             when {
-                expression { !LAST_COMMIT_MSG.contains(COMMIT_TO_SKIP) }
-                branch 'develop'
+                expression { BRANCH_NAME ==~ /^develop.*/ && params.action == 'Build' }
             }
             steps {
                 configFileProvider(
@@ -86,11 +91,11 @@ pipeline {
             }
         }
 
-        // Github
+        // RELEASE
+
         stage('Synchro gitHub') {
             when {
-                expression { !LAST_COMMIT_MSG.contains(COMMIT_TO_SKIP) }
-                branch 'develop'
+                expression { params.action == 'Release' }
             }
             steps {
                 echo 'Mise à jour github'
@@ -100,10 +105,25 @@ pipeline {
             }
         }
 
+        stage('Cloning github repository') {
+            when {
+                expression { params.action == 'Release' }
+            }
+            steps {
+                checkout([
+                        $class                           : 'GitSCM',
+                        branches                         : [[name: BRANCH_NAME]],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions                       : [[$class: 'LocalBranch', localBranch: BRANCH_NAME]],
+                        submoduleCfg                     : [],
+                        userRemoteConfigs                : [[credentialsId: 'github-credentials', url: 'https://github.com/lutece-secteur-public/lutece-ecom-plugin-tipi.git']]
+                ])
+            }
+        }
+
         stage('Release Prepare') {
             when {
-                expression { !LAST_COMMIT_MSG.contains(COMMIT_TO_SKIP) }
-                branch 'develop'
+                expression { params.action == 'Release' }
             }
             agent none
             steps {
@@ -118,8 +138,8 @@ pipeline {
                     def next_version = version.join('.') + "-SNAPSHOT"
 
                     try {
-                        timeout(time: 1, unit: 'MINUTES') {
-                            PARAMS = input message: 'Perform realease ?', ok: 'Release!',
+                        timeout(time: 2, unit: 'MINUTES') {
+                            INPUTS = input message: 'Perform realease ?', ok: 'Release!',
                                     parameters: [
                                             string(name: 'RELEASE_VERSION', defaultValue: "${release_version}", description: 'What is the release version'),
                                             string(name: 'NEXT_VERSION', defaultValue: "${next_version}", description: 'What is the development version')
@@ -127,6 +147,7 @@ pipeline {
                         }
                     } catch (err) {
                         currentBuild.result = "SUCCESS"
+                        INPUTS = 'skip'
                     }
                 }
             }
@@ -134,14 +155,13 @@ pipeline {
 
         stage('Release Perform') {
             when {
-                expression { PARAMS != 'empty' }
-                branch 'develop'
+                expression { params.action == 'Release' && INPUTS != 'skip' }
             }
             steps {
                 configFileProvider(
                         [configFile(fileId: 'maven-settings', variable: 'MAVEN_SETTINGS')]) {
                     withCredentials([usernamePassword(credentialsId: 'gitlab-http-credentials', passwordVariable: 'pwd', usernameVariable: 'user')]) {
-                        sh "mvn -s $MAVEN_SETTINGS release:prepare release:perform -Dresume=false -DreleaseVersion=${PARAMS.RELEASE_VERSION} -DdevelopmentVersion=${PARAMS.NEXT_VERSION} " +
+                        sh "mvn -s $MAVEN_SETTINGS release:prepare release:perform -Dresume=false -DreleaseVersion=${INPUTS.RELEASE_VERSION} -DdevelopmentVersion=${INPUTS.NEXT_VERSION} " +
                                 "-Darguments='-Dmaven.test.skip=true' -DignoreSnapshots=true -Dgoals=deploy -Dusername=${user} -Dpassword=${pwd}"
                     }
                 }

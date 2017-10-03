@@ -33,69 +33,68 @@
  *  * License 1.0
  *
  */
-package fr.paris.lutece.plugins.tipi.web;
-
-import java.io.IOException;
-import java.rmi.RemoteException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.rpc.ServiceException;
-
-import fr.paris.lutece.plugins.tipi.business.Tipi;
-import fr.paris.lutece.portal.service.util.AppLogService;
 
 /**
- * Used for special solr queries
- *
+ * 
+ */
+package fr.paris.lutece.plugins.tipi.util;
+
+import java.io.IOException;
+import java.io.StringWriter;
+
+import javax.xml.rpc.ServiceException;
+
+import org.codehaus.jackson.map.ObjectMapper;
+
+import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.vdp.tipi.create.url.webservice.CreateURLWebService;
+
+/**
+ * @author stephane.raynaud
  *
  */
-public class TipiServlet extends HttpServlet
+public class Utils
 {
-    private static final long serialVersionUID = -7065654487722361439L;
-
-    /**
-     * Returns poster image
-     *
-     * @param request
-     *            the request
-     * @param response
-     *            the response
-     * @throws ServletException
-     *             the servlet exception
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
-     */
-    @Override
-    protected final void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
+    private Utils( )
     {
-        try
-        {
-            Tipi.read( request ).process( );
-        } catch ( RemoteException | ServiceException e )
-        {
-            AppLogService.error( "Impossible de lire les informations du paiement", e );
-        }
     }
 
     /**
-     * Returns poster image
+     * Permet de transformer un objet en String pour l'affichage dans la log.
      *
-     * @param request
-     *            the request
-     * @param response
-     *            the response
-     * @throws ServletException
-     *             the servlet exception
-     * @throws IOException
-     *             Signals that an I/O exception has occurred.
+     * @param obj
+     *            L'objet à transformer
+     * @return unString a afficher dans la log
+     * @throws ServiceException
      */
-    @Override
-    protected final void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
+    public static String object2String( Object obj ) throws ServiceException
     {
-        doGet( request, response );
+        ObjectMapper objectMapper = new ObjectMapper( );
+        StringWriter stringEmp = new StringWriter( );
+
+        try
+        {
+            objectMapper.writeValue( stringEmp, obj );
+        } catch ( IOException e )
+        {
+            AppLogService.error( "erreur lors de la conversion : " + e.getMessage( ) );
+            throw new ServiceException( e );
+        }
+        return stringEmp.toString( );
+    }
+
+    /**
+     * Fait appel a CreateUrlWebService qui genere l'url a utiliser.
+     *
+     * @param idOp
+     * @param isTest
+     * @return une url
+     */
+    public static String getUrlApplicationTipi( String idOp, Boolean isTest )
+    {
+
+        return CreateURLWebService.getUrlApplicationTipiWebService( idOp, isTest );
+
     }
 
 }

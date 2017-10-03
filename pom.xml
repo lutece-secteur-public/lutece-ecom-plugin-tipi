@@ -24,9 +24,9 @@
     </properties>
 
     <scm>
-        <connection>scm:git:http://gestionversion.acn/applications_lutece/lutece-ecom-plugin-tipi.git</connection>
-        <developerConnection>scm:git:http://gestionversion.acn/applications_lutece/lutece-ecom-plugin-tipi.git</developerConnection>
-        <url>http://gestionversion.acn/applications_lutece/lutece-ecom-plugin-tipi.git</url>
+        <connection>scm:git:https://github.com/lutece-secteur-public/lutece-ecom-plugin-tipi.git</connection>
+        <developerConnection>scm:git:https://github.com/lutece-secteur-public/lutece-ecom-plugin-tipi.git</developerConnection>
+        <url>https://github.com/lutece-secteur-public/lutece-ecom-plugin-tipi.git</url>
         <tag>HEAD</tag>
     </scm>
 	
@@ -86,25 +86,4 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.3</version>
-                <configuration>
-                    <tagNameFormat>${project.artifactId}-@{project.version}</tagNameFormat>
-                    <providerImplementations>
-                        <git>jgit</git>
-                    </providerImplementations>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.maven.scm</groupId>
-                        <artifactId>maven-scm-provider-jgit</artifactId>
-                        <version>1.9.2</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
-    </build>
 </project>
