@@ -55,7 +55,6 @@ pipeline {
         stage('Compile - Tests') {
             when {
                 expression { params.action == 'Build' }
-                not { branch 'master' }
             }
             steps {
                 sh 'mvn clean compile'
@@ -95,6 +94,7 @@ pipeline {
 
         stage('Synchro gitHub') {
             when {
+                not { branch 'master' }
                 expression { params.action == 'Release' }
             }
             steps {
@@ -107,6 +107,7 @@ pipeline {
 
         stage('Cloning github repository') {
             when {
+                not { branch 'master' }
                 expression { params.action == 'Release' }
             }
             steps {
@@ -123,6 +124,7 @@ pipeline {
 
         stage('Release Prepare') {
             when {
+                not { branch 'master' }
                 expression { params.action == 'Release' }
             }
             agent none
@@ -155,6 +157,7 @@ pipeline {
 
         stage('Release Perform') {
             when {
+                not { branch 'master' }
                 expression { params.action == 'Release' && INPUTS != 'skip' }
             }
             steps {
@@ -166,7 +169,7 @@ pipeline {
                     }
                 }
                 sshagent(['git-credentials']) {
-                    sh "ssh -o StrictHostKeyChecking=no -l gitlab gestionversion.acn scripts/release-github.sh plugin-tipi"
+                    sh "ssh -o StrictHostKeyChecking=no -l gitlab gestionversion.acn scripts/release-github.sh plugin-tipi $BRANCH_NAME"
                 }
             }
             post {
