@@ -9,7 +9,7 @@
 
     <groupId>fr.paris.lutece.plugins</groupId>
     <artifactId>plugin-tipi</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.2</version>
     <packaging>lutece-plugin</packaging>
 
     <name>Tipi Plugin</name>
@@ -27,7 +27,7 @@
         <connection>scm:git:https://github.com/lutece-secteur-public/lutece-ecom-plugin-tipi.git</connection>
         <developerConnection>scm:git:https://github.com/lutece-secteur-public/lutece-ecom-plugin-tipi.git</developerConnection>
         <url>https://github.com/lutece-secteur-public/lutece-ecom-plugin-tipi.git</url>
-        <tag>HEAD</tag>
+        <tag>plugin-tipi-1.0.2</tag>
     </scm>
 	
     <distributionManagement>
