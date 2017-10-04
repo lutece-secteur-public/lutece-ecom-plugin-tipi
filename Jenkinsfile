@@ -160,7 +160,7 @@ pipeline {
             steps {
                 configFileProvider(
                         [configFile(fileId: 'maven-settings', variable: 'MAVEN_SETTINGS')]) {
-                    withCredentials([usernamePassword(credentialsId: 'github-http-credentials', passwordVariable: 'pwd', usernameVariable: 'user')]) {
+                    withCredentials([usernamePassword(credentialsId: 'github-credentials', passwordVariable: 'pwd', usernameVariable: 'user')]) {
                         sh "mvn -s $MAVEN_SETTINGS release:prepare release:perform -Dresume=false -DreleaseVersion=${INPUTS.RELEASE_VERSION} -DdevelopmentVersion=${INPUTS.NEXT_VERSION} " +
                                 "-Darguments='-Dmaven.test.skip=true' -DignoreSnapshots=true -Dgoals=deploy -Dusername=${user} -Dpassword=${pwd}"
                     }
