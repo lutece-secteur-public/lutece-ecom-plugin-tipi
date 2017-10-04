@@ -9,7 +9,7 @@ The Lutece Tipi plugin is made to simplify the use of Tipi. It offers a simple i
     <dependency>
         <groupId>fr.paris.lutece.plugins</groupId>
         <artifactId>plugin-tipi</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
         <type>lutece-plugin</type>
     </dependency>
 ```

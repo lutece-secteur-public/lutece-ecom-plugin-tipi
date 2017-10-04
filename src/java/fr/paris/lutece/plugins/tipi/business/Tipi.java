@@ -308,4 +308,20 @@ public class Tipi implements Serializable
 
         return this;
     }
+
+    public String getLink( )
+    {
+        Boolean isClient = CLIENT.equals( AppPropertiesService.getProperty( URL_TYPE ) );
+        return Utils.getUrlApplicationTipi( identifier, isClient );
+    }
+
+    /**
+     * Récupère l'identifiant de transaction Tipi
+     *
+     * @return l'identifiant de transaction Tipi
+     */
+    public String getIdentifier( )
+    {
+        return identifier;
+    }
 }
