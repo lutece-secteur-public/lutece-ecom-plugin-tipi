@@ -80,9 +80,9 @@
         </dependency>
 
         <dependency>
-            <groupId>fr.paris.vdp.tipi</groupId>
+            <groupId>fr.paris.lutece.plugins</groupId>
             <artifactId>construction-url</artifactId>
-            <version>1.5.0</version>
+            <version>1.5.5</version>
         </dependency>
     </dependencies>
 
