@@ -102,7 +102,7 @@ public abstract class TipiProcessor implements Serializable
     public Tipi process( Tipi tipi )
     {
         // On vérifie que la requete contient bien les données nécessaires
-        final String invalidReqParamMessage = PaiementUtils.requestParamsInvalid( tipi.getParameters( ) );
+        final String invalidReqParamMessage = PaiementUtils.requestParamsInvalid( tipi.getParameters( ), tipi.isPaymentSuccess() );
 
         if ( !StringUtils.isEmpty( invalidReqParamMessage ) )
         {
