@@ -9,7 +9,7 @@
 
     <groupId>fr.paris.lutece.plugins</groupId>
     <artifactId>plugin-tipi</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.4-SNAPSHOT</version>
     <packaging>lutece-plugin</packaging>
 
     <name>Tipi Plugin</name>
@@ -30,19 +30,6 @@
         <tag>HEAD</tag>
     </scm>
 	
-    <distributionManagement>
-        <repository>
-            <id>lutece_releases_repository</id>
-            <url>http://dev.lutece.paris.fr/tmma_nexus/content/repositories/releases/</url>
-        </repository>
-
-        <snapshotRepository>
-            <uniqueVersion>true</uniqueVersion>
-            <id>lutece_snapshots_repository</id>
-            <url>http://dev.lutece.paris.fr/tmma_nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
-
     <repositories>
         <repository>
             <snapshots>
