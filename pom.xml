@@ -37,7 +37,7 @@
             </snapshots>
             <id>lutece ville</id>
             <name>luteceRepositoryVille</name>
-            <url>http://dev.lutece.paris.fr/nexus/content/groups/maven_repository/</url>
+            <url>https://dev.lutece.paris.fr/nexus/content/groups/maven_repository/</url>
         </repository>
         <repository>
             <snapshots>
@@ -45,7 +45,7 @@
             </snapshots>
             <id>lutece</id>
             <name>luteceRepository</name>
-            <url>http://dev.lutece.paris.fr/tmma_nexus/content/repositories/releases/</url>
+            <url>https://dev.lutece.paris.fr/tmma_nexus/content/repositories/releases/</url>
         </repository>
         <repository>
             <snapshots>
@@ -53,12 +53,12 @@
             </snapshots>
             <id>luteceSnapshot</id>
             <name>luteceSnapshot</name>
-            <url>http://dev.lutece.paris.fr/tmma_nexus/content/repositories/snapshots/</url>
+            <url>https://dev.lutece.paris.fr/tmma_nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 
     <dependencies>
-        <!-- Core de Lutèce -->
+        <!-- Core de Lut&#232;ce -->
         <dependency>
             <groupId>fr.paris.lutece</groupId>
             <artifactId>lutece-core</artifactId>
